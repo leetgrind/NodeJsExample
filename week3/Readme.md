@@ -1,0 +1,1 @@
+windows: .\node_modules\.bin\nodemon main.js
