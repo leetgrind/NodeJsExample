@@ -1,7 +1,10 @@
 const express = require('express')
 
+const dotenv = require('dotenv');
+dotenv.config();
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 app.use("/media", express.static("public"))
 
@@ -19,4 +22,4 @@ app.get("/json2", (req, res) => {
 });
 
 
-app.listen(port, () => console.log("Server started at port 3000"));
+app.listen(port, () => console.log(`Server started at port ${port}`));
