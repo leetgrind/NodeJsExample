@@ -18,7 +18,13 @@ router.get("/:id", async (req, res) => {
     try{
         const id = req.params.id;
         const allUsers = await userModel.findById(id)
-        res.json(allUsers)
+        
+        if(allUsers.$isEmpty){
+            res.status(404);
+        }
+        else {
+            res.json(allUsers)
+        }
     }
     catch(err) {
         res.status(500).json({error: err.message})
