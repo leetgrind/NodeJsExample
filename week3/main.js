@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const userRoutes = require('./controller/userController');
 dotenv.config();
 
 const dbConnectionString = process.env.DATABASE_URL
@@ -21,6 +22,8 @@ const app = express();
 const port = process.env.PORT;
 
 app.use("/media", express.static("public"))
+
+app.use("/users", userRoutes);
 
 app.get("/", (req, res) => {
     res.send("hello")
