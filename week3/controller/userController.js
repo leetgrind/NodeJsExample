@@ -13,4 +13,17 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.get("/:id", async (req, res) => {
+
+    try{
+        const id = req.params.id;
+        const allUsers = await userModel.findById(id)
+        res.json(allUsers)
+    }
+    catch(err) {
+        res.status(500).json({error: err.message})
+    }
+
+});
+
 module.exports = router
