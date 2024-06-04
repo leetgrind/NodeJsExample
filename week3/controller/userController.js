@@ -8,6 +8,12 @@ const jsonParser = bodyParser.json();
 router.post("/", jsonParser, async (req, res) => {
 
     console.log(req.body)
+    
+    if(!req.body.email) {
+        res.status(400).send({
+            "message": "Email is required"
+        });
+    }
 
     const newUser = new userModel({
         email: req.body.email,
@@ -20,6 +26,18 @@ router.post("/", jsonParser, async (req, res) => {
         res.status(201).json(newData)
     }
     catch (err) {
+        res.status(500).json({message: err.message})
+    }
+});
+
+router.delete("/:id", async(req, res) => {
+    try{
+        const id = req.params.id;
+        const deletedUser = await userModel.findByIdAndDelete(id);
+        console.log(`User with id: ${deletedUser.id} is deleted`);
+        res.status(204).send()
+    }
+    catch(err) {
         res.status(500).json({message: err.message})
     }
 });
