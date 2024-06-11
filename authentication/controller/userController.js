@@ -19,8 +19,19 @@ router.post("/login", jsonParser, async (req, res) => {
     password = req.body.password;
 
     // query mongo db with email 
+    const user = await userModel.findOne({email});
+
+    if(!user) {
+        res.status(401).send();
+        return;
+    }
 
     // match the password
+    if(password != user.password) {
+        res.status(401).send();
+    }
+
+  
 
     const token = jwt.sign({email, userid: "123456"},jwt_secret_key, {expiresIn: '1h'} );
 
