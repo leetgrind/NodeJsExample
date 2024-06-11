@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const userModel = require("../models/user");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const bcrypt = require("bcrypt")
 
 dotenv.config();
 
@@ -11,7 +12,14 @@ const jwt_secret_key = process.env.SECRET_KEY
 const router = express.Router();
 const jsonParser = bodyParser.json();
 
+router.post("/hash", jsonParser, async (req, res)=> {
+    password = req.body.password;
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    res.status(200).json({hashedPassword});
+
+});
 
 
 router.post("/login", jsonParser, async (req, res) => {
@@ -26,8 +34,10 @@ router.post("/login", jsonParser, async (req, res) => {
         return;
     }
 
+    const isPasswordMatched = await bcrypt.compare(password, user.password);
+
     // match the password
-    if(password != user.password) {
+    if(!isPasswordMatched) {
         res.status(401).send();
     }
 
@@ -50,15 +60,24 @@ router.post("/", jsonParser, async (req, res) => {
         });
     }
 
+    const password = req.body.password;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = new userModel({
         email: req.body.email,
         name: req.body.name,
-        password: req.body.password
+        password: hashedPassword
     });
+
+    const returnUser = {
+        email: req.body.email,
+        name: req.body.name
+    }
 
     try {
         const newData = await newUser.save();
-        res.status(201).json(newData)
+        res.status(201).json(returnUser)
     }
     catch (err) {
         res.status(500).json({message: err.message})
